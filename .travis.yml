@@ -1,0 +1,36 @@
+language: shell
+
+git:
+ depth: false
+
+os:
+ - windows
+ # - linux
+
+matrix:
+   - os: linux
+     langage: python
+     python: "3.6"
+   - os: windows
+     language: python
+     python: "3.7"
+     before_install:
+       - choco upgrade
+       - choco install python3
+       - export PATH="/c/Python37:/c/Python37/Scripts:$PATH"
+       - python -m pip install --upgrade pip wheel
+
+install:
+ - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then bash ./build/install_linux.sh; fi
+ - if [[ "$TRAVIS_OS_NAME" == "windows" ]]; then powershell -ExecutionPolicy RemoteSigned ./build/install_windows.ps1; fi
+
+script:
+ - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then bash ./build/script_linux.sh; fi
+ - if [[ "$TRAVIS_OS_NAME" == "windows" ]]; then powershell -ExecutionPolicy RemoteSigned ./build/script_windows.ps1; fi
+ - "C:\salt\salt-call.bat --local state.show_sls amazon-inspector"
+ - salt-call --local state.show_sls amazon-inspector
+
+after_script:
+ - dir "C:\salt" 
+ - dir "C:\salt\srv\salt" 
+ - python -m pip install requests
