@@ -1,25 +1,17 @@
 ---
-language: shell
-
-git:
-  depth: false
-
-#os:
-#  - windows
-#  - linux
-
+language: python
+python:
+  - "3.6"
 matrix:
-  - os: linux
-    langage: python
-    python: "3.6"
-  - os: windows
-    language: python
-    python: "3.7"
-    before_install:
-      - choco upgrade
-      - choco install python3
-      - export PATH="/c/Python37:/c/Python37/Scripts:$PATH"
-      - python -m pip install --upgrade pip wheel
+  include:
+    - os: windows
+      language: python
+      python: "3.7"
+      before_install:
+        - choco upgrade
+        - choco install python3
+        - export PATH="/c/Python37:/c/Python37/Scripts:$PATH"
+        - python -m pip install --upgrade pip wheel
 
 install:
   - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then bash ./build/install_linux.sh; fi
@@ -35,4 +27,3 @@ after_script:
   - dir "C:\salt"
   - dir "C:\salt\srv\salt"
   - python -m pip install requests
-    
